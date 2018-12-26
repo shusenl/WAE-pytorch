@@ -26,14 +26,27 @@ class CustomImageFolder(ImageFolder):
         return img
 
 class CustomImageList(Dataset):
-    def __init__(self, fileList):
-        self.data_tensor = data_tensor
+    def __init__(self, fileListName, transforms = None):
+        self.data = []
+        self.transforms = transforms
+        ## load image path / label pair
+        with open(fileListName) as f:
+            self.data = [x.split() for x in f.readlines()]
 
     def __getitem__(self, index):
-        return self.data_tensor[index]
+        path, label = self.data[index]
+        img = Image.open(path)
+        if self.transforms is not None:
+            img = self.transforms(img)
+        #print ("label: ",label)
+        return img, torch.tensor(int(label))
 
     def __len__(self):
-        return self.data_tensor.size(0)
+        return len(self.data)
+
+    def test(self):
+        for item in self.data:
+           print("label:", item[1])
 
 class CustomTensorDataset(Dataset):
     def __init__(self, data_tensor):
@@ -55,7 +68,8 @@ def return_data(args):
     if name.lower() == 'celeba':
         root = Path(dset_dir).joinpath('CelebA_trainval')
         transform = transforms.Compose([
-            transforms.CenterCrop((140, 140)),
+            transforms.CenterCrop((240, 240)),
+            # transforms.CenterCrop((140, 140)),
             transforms.Resize((64, 64)),
             transforms.ToTensor(),])
         train_kwargs = {'root':root, 'transform':transform}
