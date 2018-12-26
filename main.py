@@ -49,7 +49,7 @@ if __name__ == "__main__":
     parser.add_argument('--dataset', default='CelebA', type=str, help='dataset name')
     parser.add_argument('--num_workers', default=2, type=int, help='dataloader num_workers')
 
-    parser.add_argument('--viz_on', default=True, type=str2bool, help='enable visdom visualization')
+    parser.add_argument('--viz_on', default=False, type=str2bool, help='enable visdom visualization')
     parser.add_argument('--viz_name', default='main', type=str, help='visdom env name')
     parser.add_argument('--viz_port', default=8097, type=str, help='visdom port number')
     parser.add_argument('--save_output', default=True, type=str2bool, help='save traverse images and gif')

@@ -40,7 +40,9 @@ class Trainer(object):
             self.nc = 3
             self.decoder_dist = 'gaussian'
         else:
-            raise NotImplementedError
+            self.nc = 1
+            self.decoder_dist = 'gaussian'
+            # raise NotImplementedError
 
         self.net = cuda(WAE(self.z_dim, self.nc), self.use_cuda)
         self.optim = optim.Adam(self.net.parameters(), lr=self.lr,
