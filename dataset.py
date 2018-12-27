@@ -7,7 +7,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision.datasets import ImageFolder
 from torchvision import transforms
-
+from PIL import Image
 
 def is_power_of_2(num):
     return ((num & (num - 1)) == 0) and num != 0
@@ -39,7 +39,8 @@ class CustomImageList(Dataset):
         if self.transforms is not None:
             img = self.transforms(img)
         #print ("label: ",label)
-        return img, torch.tensor(int(label))
+        return img
+        #return img, torch.tensor(int(label))
 
     def __len__(self):
         return len(self.data)
@@ -82,7 +83,7 @@ def return_data(args):
             transforms.Grayscale(),
             transforms.Resize((64, 64)),
             transforms.ToTensor(),])
-        train_kwargs = {'fileListName':fileListName, 'transform':transform}
+        train_kwargs = {'fileListName':fileListName, 'transforms':transform}
         dset = CustomImageList
 
     train_data = dset(**train_kwargs)
