@@ -68,14 +68,22 @@ def return_data(args):
     if name.lower() == 'celeba':
         root = Path(dset_dir).joinpath('CelebA_trainval')
         transform = transforms.Compose([
-            transforms.CenterCrop((240, 240)),
-            # transforms.CenterCrop((140, 140)),
+            transforms.CenterCrop((140, 140)),
             transforms.Resize((64, 64)),
             transforms.ToTensor(),])
         train_kwargs = {'root':root, 'transform':transform}
         dset = CustomImageFolder
     else:
-        raise NotImplementedError
+        #specify access to file list
+        fileListName = dset_dir
+        root = Path(dset_dir).joinpath('CelebA_trainval')
+        transform = transforms.Compose([
+            transforms.CenterCrop((240, 240)),
+            transforms.Grayscale(),
+            transforms.Resize((64, 64)),
+            transforms.ToTensor(),])
+        train_kwargs = {'fileListName':fileListName, 'transform':transform}
+        dset = CustomImageList
 
     train_data = dset(**train_kwargs)
     train_loader = DataLoader(train_data,
