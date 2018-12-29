@@ -63,7 +63,14 @@ class Trainer(object):
             self.win_D = None
             self.win_mu = None
             self.win_var = None
-
+        else:
+            self.viz = None
+            self.win_recon = None
+            self.win_QD = None
+            self.win_D = None
+            self.win_mu = None
+            self.win_var = None
+ 
         self.ckpt_dir = Path(args.ckpt_dir).joinpath(args.viz_name)
         if not self.ckpt_dir.exists():
             self.ckpt_dir.mkdir(parents=True, exist_ok=True)
@@ -95,6 +102,7 @@ class Trainer(object):
             out = False
             while not out:
                 for x in self.data_loader:
+                    #x,label = x
                     pbar.update(1)
                     self.global_iter += 1
                     if self.global_iter % iters_per_epoch == 0:
@@ -138,18 +146,19 @@ class Trainer(object):
 
 
                     if self.global_iter%50 == 0:
-                        self.gather.insert(images=x.data)
-                        self.gather.insert(images=x_recon.data)
-                        self.viz_reconstruction()
-                        self.viz_lines()
-                        self.sample_x_from_z(n_sample=100)
-                        self.gather.flush()
-                        self.save_checkpoint('last')
-                        pbar.write('[{}] recon_loss:{:.3f} Q_loss:{:.3f} D_loss:{:.3f}'.format(
-                            self.global_iter, recon_loss.data[0], Q_loss.data[0], D_loss.data[0]))
-                        pbar.write('D_z:{:.3f} D_z_tilde:{:.3f}'.format(
-                            F.sigmoid(D_z).mean().detach().data[0],
-                            F.sigmoid(D_z_tilde).mean().detach().data[0]))
+                        if self.viz:
+                           self.gather.insert(images=x.data)
+                           self.gather.insert(images=x_recon.data)
+                           self.viz_reconstruction()
+                           self.viz_lines()
+                           self.sample_x_from_z(n_sample=100)
+                           self.gather.flush()
+                           self.save_checkpoint('last')
+                           pbar.write('[{}] recon_loss:{:.3f} Q_loss:{:.3f} D_loss:{:.3f}'.format(
+                               self.global_iter, recon_loss.data[0], Q_loss.data[0], D_loss.data[0]))
+                           pbar.write('D_z:{:.3f} D_z_tilde:{:.3f}'.format(
+                               F.sigmoid(D_z).mean().detach().data[0],
+                               F.sigmoid(D_z_tilde).mean().detach().data[0]))
 
                     if self.global_iter%2000 == 0:
                         self.save_checkpoint(str(self.global_iter))
@@ -168,7 +177,8 @@ class Trainer(object):
         x_recon = F.sigmoid(self.gather.data['images'][1][:100])
         x_recon = make_grid(x_recon, normalize=True, nrow=10)
         images = torch.stack([x, x_recon], dim=0).cpu()
-        self.viz.images(images, env=self.viz_name+'_reconstruction',
+        if self.viz:
+           self.viz.images(images, env=self.viz_name+'_reconstruction',
                         opts=dict(title=str(self.global_iter)), nrow=2)
         self.net.train()
 
