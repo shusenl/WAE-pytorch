@@ -184,17 +184,19 @@ class Trainer(object):
 
     def save_reconstruction(self):
         self.net.eval()
-        x = self.gather.data['images'][0][:100]
-        x = make_grid(x, normalize=True, nrow=10)
-        x_recon = F.sigmoid(self.gather.data['images'][1][:100])
-        x_recon = make_grid(x_recon, normalize=True, nrow=10)
-        images = torch.stack([x, x_recon], dim=0).cpu()
-        np.save('reconstruction.npy',images.numpy())
-
-        # if self.viz:
-        #    self.viz.images(images, env=self.viz_name+'_reconstruction',
-        #                 opts=dict(title=str(self.global_iter)), nrow=2)
-        # self.net.train()
+        import numpy as np
+        for item in self.data_loader:
+          x = Variable(cuda(item, self.use_cuda))
+          x_recon, z_tilde = self.net(x)
+          x_recon = x_recon.data[:5]
+          x = x.data[:5]
+          #x_grid = make_grid(x, normalize=True, nrow=10)
+          #x_recon = F.sigmoid(x_recon)
+          #x_grid_recon = make_grid(x_recon, normalize=True, nrow=10)
+          #images = torch.stack([x_grid, x_grid_recon], dim=0).cpu()
+          images = torch.stack([x, x_recon], dim=0).cpu()
+          np.save('reconstruction.npy',images.numpy())
+          break
 
     def viz_lines(self):
         self.net.eval()
@@ -377,8 +379,8 @@ class Trainer(object):
             print("=> saved checkpoint '{}' (iter {})".format(file_path, self.global_iter))
 
     def load_checkpoint(self, filename, silent=False):
-        print(self.ckpt_dir)
         file_path = self.ckpt_dir.joinpath(filename)
+        print(file_path)
         if file_path.is_file():
             checkpoint = torch.load(file_path.open('rb'))
             self.global_iter = checkpoint['iter']
