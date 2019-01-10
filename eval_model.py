@@ -1,4 +1,14 @@
-from trainer_gan import *
+import argparse
+
+import numpy as np
+import torch
+
+import trainer_mmd
+import trainer_gan
+from utils import str2bool
+
+torch.backends.cudnn.enabled = True
+torch.backends.cudnn.benchmark = True
 
 def main(args):
     seed = args.seed
