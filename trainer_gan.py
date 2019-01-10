@@ -70,7 +70,7 @@ class Trainer(object):
             self.win_D = None
             self.win_mu = None
             self.win_var = None
- 
+
         self.ckpt_dir = Path(args.ckpt_dir).joinpath(args.viz_name)
         if not self.ckpt_dir.exists():
             self.ckpt_dir.mkdir(parents=True, exist_ok=True)
@@ -181,6 +181,20 @@ class Trainer(object):
            self.viz.images(images, env=self.viz_name+'_reconstruction',
                         opts=dict(title=str(self.global_iter)), nrow=2)
         self.net.train()
+
+    def save_reconstruction(self):
+        self.net.eval()
+        x = self.gather.data['images'][0][:100]
+        x = make_grid(x, normalize=True, nrow=10)
+        x_recon = F.sigmoid(self.gather.data['images'][1][:100])
+        x_recon = make_grid(x_recon, normalize=True, nrow=10)
+        images = torch.stack([x, x_recon], dim=0).cpu()
+        np.save('reconstruction.npy',images.numpy())
+
+        # if self.viz:
+        #    self.viz.images(images, env=self.viz_name+'_reconstruction',
+        #                 opts=dict(title=str(self.global_iter)), nrow=2)
+        # self.net.train()
 
     def viz_lines(self):
         self.net.eval()
