@@ -377,6 +377,7 @@ class Trainer(object):
             print("=> saved checkpoint '{}' (iter {})".format(file_path, self.global_iter))
 
     def load_checkpoint(self, filename, silent=False):
+        print(self.ckpt_dir)
         file_path = self.ckpt_dir.joinpath(filename)
         if file_path.is_file():
             checkpoint = torch.load(file_path.open('rb'))

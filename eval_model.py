@@ -23,7 +23,7 @@ def main(args):
 
     trainer = Trainer(args)
     # trainer.train()
-    checkpointFileName = 20000
+    checkpointFileName = "checkpoints/main/34000"
     trainer.load_checkpoint(checkpointFileName)
     trainer.save_reconstruction()
 
