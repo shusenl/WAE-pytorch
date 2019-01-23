@@ -37,7 +37,7 @@ if __name__ == "__main__":
     parser.add_argument('--batch_size', default=100, type=int, help='batch size')
 
     parser.add_argument('--model', default='mmd', type=str, help='model for wae. mmd/gan')
-    parser.add_argument('--z_dim', default=64, type=int, help='dimension of the latent z')
+    parser.add_argument('--z_dim', default=100, type=int, help='dimension of the latent z')
     parser.add_argument('--z_var', default=2, type=int, help='scalar variance of the isotropic gaussian prior P(Z)')
     parser.add_argument('--reg_weight', default=100, type=float, help='lambda parameter for the regularization term')
     parser.add_argument('--lr', default=1e-3, type=float, help='learning rate for AE')
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     parser.add_argument('--beta2', default=0.999, type=float, help='Adam optimizer beta2')
 
     parser.add_argument('--dset_dir', default='data', type=str, help='dataset directory')
-    parser.add_argument('--dataset', default='CelebA', type=str, help='dataset name')
+    parser.add_argument('--dataset', default='Other', type=str, help='dataset name')
     parser.add_argument('--num_workers', default=2, type=int, help='dataloader num_workers')
 
     parser.add_argument('--viz_on', default=False, type=str2bool, help='enable visdom visualization')

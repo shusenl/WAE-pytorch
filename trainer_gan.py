@@ -146,6 +146,7 @@ class Trainer(object):
 
 
                     if self.global_iter%50 == 0:
+                        self.save_reconstruction()
                         if self.viz:
                            self.gather.insert(images=x.data)
                            self.gather.insert(images=x_recon.data)
@@ -197,6 +198,7 @@ class Trainer(object):
           images = torch.stack([x, x_recon], dim=0).cpu()
           np.save('reconstruction.npy',images.numpy())
           break
+        self.net.train()
 
     def viz_lines(self):
         self.net.eval()
